@@ -36,9 +36,10 @@ def travelWeightTotal_changingDist(points, distances, periodicity, loop = True):
     N = len(points)
     dist_sum = 0
     for i in range(N-1):
-        dist_sum += twoPointDist(points[i], points[i+1], distances[:,:,round(dist_sum) % periodicity])
+        dist_sum += twoPointDist(points[i], points[i+1], distances[round(dist_sum) % periodicity,:,:])
+        
     if loop:
-        dist_sum += twoPointDist(points[N-1], points[0], distances[:,:,round(dist_sum) % periodicity])
+        dist_sum += twoPointDist(points[N-1], points[0], distances[round(dist_sum) % periodicity,:,:])
     return(dist_sum)
 
 def exchangeTwoPartsorder(x1, x2, y1, y2, arr): 
