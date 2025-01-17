@@ -92,7 +92,7 @@ def Opt_method(x,array):
         else:
             return Lin_3_Opt(array)
         
-def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha = 0.999, method =2):#korrigiert,funktioniert
+def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha = 0.999, method =2):
     """ input:  points - points that should be visited by each path (in some order) - array
                 dist_matrix - matrix containing the 'distances' between each point - 2darray
                 tries - itterations of the Monte Carlos - Markov chain - int
@@ -122,7 +122,7 @@ def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha 
         temps[i+1] = alpha*temps[i] 
     return(points, pathWeights, temps)
 
-def traveling_MC_constDist_history(points, dist_matrix, tries, starting_temp = 1, alpha = 0.999, method=2):#korrigiert,funktioniert
+def traveling_MC_constDist_history(points, dist_matrix, tries, starting_temp = 1, alpha = 0.999, method=2):
     """ input:  points - points that should be visited by each path (in some order) - array
                 dist_matrix - matrix containing the 'distances' between each point - 2darray
                 tries - itterations of the Monte Carlos - Markov chain - int
@@ -147,7 +147,7 @@ def traveling_MC_constDist_history(points, dist_matrix, tries, starting_temp = 1
         
         new_sequence = Opt_method(method,points)
         new_cost = totalTravelDist(new_sequence, dist_matrix)
-        if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]): ##should it be temps[i+1]?????
+        if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]): 
             points = new_sequence
             cost = new_cost
         pathWeights[i+1] = cost
@@ -156,7 +156,7 @@ def traveling_MC_constDist_history(points, dist_matrix, tries, starting_temp = 1
     return(pathWeights, pathHistory, temps)
 
 ###now time dependent with matrices sored in dim a (3darray 3rd dim is 'the' time)
-def traveling_changingDist_MC(points, distances, tries, period, starting_temp = 1, alpha = 0.999 , method =2):#korrigiert,funktioniert
+def traveling_changingDist_MC(points, distances, tries, period, starting_temp = 1, alpha = 0.999 , method =2):
     """ input:  points - points that should be visited by each path (in some order) - array
                 distances - 3d-matrix containing the 'distances' and time evolution between each point - 3darray
                 tries - itterations of the Monte Carlos - Markov chain - int
@@ -182,7 +182,7 @@ def traveling_changingDist_MC(points, distances, tries, period, starting_temp = 
         
         new_sequence = Opt_method(method,points)
         new_cost = travelWeightTotal_changingDist(new_sequence, distances, period)
-        if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]): ##should it be temps[i+1]?????
+        if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]): 
             points = new_sequence
             cost = new_cost
         pathWeights[i+1] = cost
