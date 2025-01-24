@@ -119,7 +119,6 @@ def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha 
             points = new_sequence
             cost = new_cost
         pathWeights[i+1] = cost
-        #C[i+1] = np.var(cost)/T**2
         temps[i+1] = alpha*temps[i] 
     return(points, pathWeights, temps)
 
@@ -192,3 +191,47 @@ def traveling_changingDist_MC(points, distances, tries, period, starting_temp = 
         temps[i+1] = alpha*temps[i]   
     return(pathWeights, pathHistory, temps)
 
+def traveling_MC_constDist_break(points, dist_matrix, tries, starting_temp = 1, alpha = 0.999, ameloration = -0.01,
+                                 tries_stop = 100, method =2):
+    """ input:  points - points that should be visited by each path (in some order) - array
+                dist_matrix - matrix containing the 'distances' between each point - 2darray
+                tries - itterations of the Monte Carlos - Markov chain - int
+                starting_temp - scalar in the exponent of the markov chain acception process - int
+                alpha - scalar refgulating the decrease of the temperature after each loop iteration in the MC
+                tries_stop - check for ameloration between d[x] and d[x+tries_stop] - int
+                ameloration -  Improvement requiered to stop loop
+                method - see Opt_method- cuurently random between Lin-2 & Lin-3
+        return: points - points that should be visited by each path (in some order) - array
+                pathWeights - 'distances' (better weights) of each path - array of int
+                temps - temperatures after each MC step - array of int
+    """
+    
+    pathWeights = np.zeros(tries+1)
+    temps = np.zeros(tries+1)
+    pathWeights[0] = totalTravelDist(points, dist_matrix)
+    temps[0] = starting_temp
+    cost = pathWeights[0]
+    finish = False
+    for i in range(tries):
+        
+        if finish == False:
+            new_sequence = Opt_method(method,points)
+            new_cost = totalTravelDist(new_sequence, dist_matrix)
+            if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]):
+                points = new_sequence
+                cost = new_cost
+            pathWeights[i+1] = cost
+            temps[i+1] = alpha*temps[i] 
+            if i > tries_stop:
+                counter = 0
+                for z in range(tries_stop):
+                    if -10**(-9) < pathWeights[i+1-z]/pathWeights[i+1]-1 < ameloration:
+                        counter = counter +1
+                if counter == tries_stop:
+                    print('requirement met at ',i,'try')
+                    finish = True
+        else:
+            pathWeights[i+1] = cost
+            temps[i+1] = temps[i]
+                
+    return(points, pathWeights, temps)

@@ -67,3 +67,34 @@ def load_matrix(name):
     """
     data = np.loadtxt(name)
     return data
+
+def random_dist_matrix(N,low,high,save='0'):
+        """
+        distribute points randomly in (low,high)x(low,high) and return distance
+    input:  
+            N : number of points of interest -> dimension of matrix _int  
+            low: smallest possible point in x,y direction
+            high : highest possible point in x,y direction
+            save: number to save matrix 
+    output: D - random ditsancematrix for testpurpose
+            x - x-position of the point
+            y - y-position of the point
+    """
+    x = np.random.uniform(low, high =high,size=N)
+    y = np.random.uniform(low, high =high,size=N)
+    D = np.zeros((N,N))
+    for i in range(len(x)):
+        for j in range(len(y)):
+            D[i,j] = np.sqrt((x[i]-x[j])**2+ (y[i]-y[j])**2)
+    with open('testmatrix_rand('+str(low)+'_'+str(high)+')_N'+str(N)+'_t'+'_'+str(save)+'.txt', 'w') as outfile:
+
+        outfile.write('# Array shape: {0}\n'.format(D.shape))
+
+        for data_slice in D:
+
+                np.savetxt(outfile, data_slice, fmt='%-7.2f')
+
+
+                # Writing out a break to indicate different slices...
+                outfile.write('# New slice\n')
+    return D,x,y
