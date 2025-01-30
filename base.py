@@ -1,5 +1,12 @@
 import numpy as np
 
+def twoPointDist_new(x, y, dist_matrix): 
+    """ input:  two points x and y - (int)
+                matrix giving the distances between points - (2d array)
+        return: distance (int) between point x and point y (direction x to y)
+    """
+    return(dist_matrix[x-1, y-1])
+
 def twoPointDist(x, y, dist_matrix): 
     """ input:  two points x and y - (int)
                 matrix giving the distances between points - (2d array)
@@ -24,6 +31,17 @@ def totalTravelDist(points, dist_matrix, loop=True):
         for i in range(N-1):
             dist_sum += twoPointDist(points[i], points[i+1], dist_matrix)
     return(dist_sum)
+
+def totalTravelDist_new(path, distMat):
+    N = len(path)
+    sum = twoPointDist_new(path[N-1], path[0], distMat)
+    for i in range(N-1):
+        #print(sum)
+        k = path[i]
+        l = path[i+1]
+        #print(k, 'to', l)
+        sum += twoPointDist_new(k, l, distMat)
+    return(sum)
 
 def travelWeightTotal_changingDist(points, distances, periodicity, loop = True): 
     
