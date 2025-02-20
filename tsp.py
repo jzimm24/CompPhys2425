@@ -264,24 +264,30 @@ def euler_circle(tree,start =0):
 
                 for q in range(len(E)): 
                     if E[q,0] in Trail: # We have edge [d,f] search for vertex d in trail
-                        circle = np.where(Trail == E[q,0])
-                        d = circle[0][0]
-                        Trailleft = Trail[:d+1]
-                        Trailright = Trail[d+1:]
-                        Taril =np.append(Trailright,Trailleft)
-                        Trail = np.append(Taril,E[q]).astype(int)
+                        if E[q,0]==Trail[-1]:
+                            Trail = np.append(Trail,E[q]).astype(int)
+                        else:
+                            circle = np.where(Trail == E[q,0])
+                            d = circle[0][0]
+
+                            Trailleft = Trail[:d+1]
+                            Trailright = Trail[d+1:]
+                            Taril =np.append(Trailright,Trailleft)
+                            Trail = np.append(Taril,E[q]).astype(int)
 
                         E = np.delete(E,q,0)
                         break
                     if E[q,1] in Trail:
+                        if E[q,1]==Trail[-1]:
+                            Trail = np.append(Trail,np.flip(E[q])).astype(int)
+                        else:
+                            circle = np.where(Trail == E[q,1])
 
-                        circle = np.where(Trail == E[q,1])
-
-                        d = circle[0][0]
-                        Trailleft = Trail[:d+1]
-                        Trailright = Trail[d+1:]
-                        Taril =np.append(Trailright,Trailleft)
-                        Trail = np.append(Taril,np.flip(E[q])).astype(int)
+                            d = circle[0][0]
+                            Trailleft = Trail[:d+1]
+                            Trailright = Trail[d+1:]
+                            Taril =np.append(Trailright,Trailleft)
+                            Trail = np.append(Taril,np.flip(E[q])).astype(int)
 
                         E = np.delete(E,q,0)
                         break
@@ -313,6 +319,18 @@ def christofides(distances,start=0):
     match = matching(min_tree,distances)
     euler = euler_circle(match,start)
     return hamilton(euler)
+
+def christofides_all(A):
+    """
+    Input: distances_ Matrix conatining distances between points
+    Output: Best solution of tsp with Christofides algorithm over all starting points
+    """    
+    dist= len(A)*np.max(A)
+    for s in range(len(A)):
+        if base.totalTravelDist(christofides(A,s),A)<dist:
+            dist = base.totalTravelDist(tsp.christofides(A,s),A)
+            path = christofides(A,s)
+    return path
 
 def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha = 0.999, method =2):
     """ input:  points - points that should be visited by each path (in some order) - array
