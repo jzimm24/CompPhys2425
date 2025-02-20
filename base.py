@@ -1,12 +1,5 @@
 import numpy as np
 
-def twoPointDist_new(x, y, dist_matrix): 
-    """ input:  two points x and y - (int)
-                matrix giving the distances between points - (2d array)
-        return: distance (int) between point x and point y (direction x to y)
-    """
-    return(dist_matrix[x-1, y-1])
-
 def twoPointDist(x, y, dist_matrix): 
     """ input:  two points x and y - (int)
                 matrix giving the distances between points - (2d array)
@@ -31,17 +24,6 @@ def totalTravelDist(points, dist_matrix, loop=True):
         for i in range(N-1):
             dist_sum += twoPointDist(points[i], points[i+1], dist_matrix)
     return(dist_sum)
-
-def totalTravelDist_new(path, distMat):
-    N = len(path)
-    sum = twoPointDist_new(path[N-1], path[0], distMat)
-    for i in range(N-1):
-        #print(sum)
-        k = path[i]
-        l = path[i+1]
-        #print(k, 'to', l)
-        sum += twoPointDist_new(k, l, distMat)
-    return(sum)
 
 def travelWeightTotal_changingDist(points, distances, periodicity, loop = True): 
     
@@ -122,20 +104,23 @@ def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha 
                 pathWeights - 'distances' (better weights) of each path - array of int
                 temps - temperatures after each MC step - array of int
     """
-    
+    points = np.append(points,points[0]) #Schließe die Punkte zu einem Kreis   #Neu
     pathWeights = np.zeros(tries+1)
     temps = np.zeros(tries+1)
-    pathWeights[0] = totalTravelDist(points, dist_matrix)
+    pathWeights[0] = base.totalTravelDist(points, dist_matrix)
     temps[0] = starting_temp
     cost = pathWeights[0]
     
     for i in range(tries):
-        
-        new_sequence = Opt_method(method,points)
-        new_cost = totalTravelDist(new_sequence, dist_matrix)
+        points = np.delete(points,-1)#Entferne Kreispunkt               #NEU
+        new_sequence = base.Opt_method(method,points)
+        new_sequence = np.append(new_sequence,new_sequence[0])#Schließe die Punkte zu einem Kreis #NEU 
+        new_cost = base.totalTravelDist(new_sequence, dist_matrix)
         if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]):
             points = new_sequence
             cost = new_cost
+        else:                                                           #NEU
+            points = np.append(points,points[0])#Schließe die Punkte zu einem Kreis     #NEU
         pathWeights[i+1] = cost
         temps[i+1] = alpha*temps[i] 
     return(points, pathWeights, temps)
@@ -151,6 +136,7 @@ def traveling_MC_constDist_history(points, dist_matrix, tries, starting_temp = 1
                 pathHistory - all paths in the order they have been explored (same as pathWeights) - 2darray
                 temps - temperatures after each MC step - array of int
     """
+    points = np.append(points,points[0]) #Schließe die Punkte zu einem Kreis   #Neu
     pathHistory = np.zeros((tries+1, len(points)))
     pathWeights = np.zeros(tries+1)
     temps = np.zeros(tries+1)
@@ -162,12 +148,15 @@ def traveling_MC_constDist_history(points, dist_matrix, tries, starting_temp = 1
 
     
     for i in range(tries):
-        
+        points = np.delete(points,-1)#Entferne Kreispunkt               #NEU
         new_sequence = Opt_method(method,points)
+        new_sequence = np.append(new_sequence,new_sequence[0])#Schließe die Punkte zu einem Kreis #NEU 
         new_cost = totalTravelDist(new_sequence, dist_matrix)
         if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]): 
             points = new_sequence
             cost = new_cost
+        else:                                                           #NEU
+            points = np.append(points,points[0])#Schließe die Punkte zu einem Kreis     #NEU
         pathWeights[i+1] = cost
         pathHistory[i+1] = points
         temps[i+1] = alpha*temps[i]      
@@ -186,6 +175,7 @@ def traveling_changingDist_MC(points, distances, tries, period, starting_temp = 
                 pathHistory - all paths in the order they have been explored (same as pathWeights) - 2darray
                 temps - temperatures after each MC step - array of int
     """
+    points = np.append(points,points[0]) #Schließe die Punkte zu einem Kreis   #Neu
     pathHistory = np.zeros((tries+1, len(points)))
     pathWeights = np.zeros(tries+1)
     temps = np.zeros(tries+1)
@@ -197,12 +187,15 @@ def traveling_changingDist_MC(points, distances, tries, period, starting_temp = 
  
     
     for i in range(tries):
-        
+        points = np.delete(points,-1)#Entferne Kreispunkt               #NEU
         new_sequence = Opt_method(method,points)
+        new_sequence = np.append(new_sequence,new_sequence[0])#Schließe die Punkte zu einem Kreis #NEU 
         new_cost = travelWeightTotal_changingDist(new_sequence, distances, period)
         if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]): 
             points = new_sequence
             cost = new_cost
+        else:                                                           #NEU
+            points = np.append(points,points[0])#Schließe die Punkte zu einem Kreis     #NEU
         pathWeights[i+1] = cost
         pathHistory[i+1] = points
 
