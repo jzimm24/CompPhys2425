@@ -107,15 +107,15 @@ def traveling_MC_constDist(points, dist_matrix, tries, starting_temp = 1, alpha 
     points = np.append(points,points[0]) #Schließe die Punkte zu einem Kreis   #Neu
     pathWeights = np.zeros(tries+1)
     temps = np.zeros(tries+1)
-    pathWeights[0] = base.totalTravelDist(points, dist_matrix)
+    pathWeights[0] = totalTravelDist(points, dist_matrix)
     temps[0] = starting_temp
     cost = pathWeights[0]
     
     for i in range(tries):
         points = np.delete(points,-1)#Entferne Kreispunkt               #NEU
-        new_sequence = base.Opt_method(method,points)
+        new_sequence = Opt_method(method,points)
         new_sequence = np.append(new_sequence,new_sequence[0])#Schließe die Punkte zu einem Kreis #NEU 
-        new_cost = base.totalTravelDist(new_sequence, dist_matrix)
+        new_cost = totalTravelDist(new_sequence, dist_matrix)
         if np.random.uniform(low=0, high=1) < np.exp((pathWeights[i]-new_cost)/temps[i]):
             points = new_sequence
             cost = new_cost
