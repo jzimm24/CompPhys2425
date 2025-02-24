@@ -328,7 +328,7 @@ def christofides_all(A):
     dist= len(A)*np.max(A)
     for s in range(len(A)):
         if base.totalTravelDist(christofides(A,s),A)<dist:
-            dist = base.totalTravelDist(tsp.christofides(A,s),A)
+            dist = base.totalTravelDist(christofides(A,s),A)
             path = christofides(A,s)
     return path
 
